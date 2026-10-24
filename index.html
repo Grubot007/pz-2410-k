@@ -219,6 +219,24 @@ footer .ai{border:1px solid var(--line-2);border-radius:var(--r);padding:14px 18
 .pp-war:hover{color:var(--text);border-color:var(--muted)}
 .pp-war[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .spis-sub a{padding-left:28px}
+.zw-lista{display:flex;flex-direction:column;gap:28px;margin-top:16px}
+.zw-karta{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--gap);align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:var(--gap)}
+.zw-karta .pp-karta{border:0;background:transparent;width:100%;max-width:760px}
+.zw-karta .pp-karta figcaption{padding:12px 0 0}
+.zw-klipy{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap)}
+.zw-klip{margin:0;display:flex;flex-direction:column;min-width:0}
+.zw-klip video{display:block;width:100%;height:auto;object-fit:contain;background:var(--media-bg);border-radius:var(--r-s)}
+.zw-klip figcaption{padding:8px 0 0}
+.zw-klip p{margin:0 0 4px}
+.zw-model{font-size:var(--fs-s)}
+.zw-oko{font-size:var(--fs-s);color:var(--text)}
+.zw-brak{display:flex;align-items:center;min-height:200px;padding:20px;border:1px dashed var(--line-2);border-radius:var(--r-s);background:repeating-linear-gradient(135deg,var(--surface) 0 8px,var(--surface-2) 8px 16px)}
+.zw-brak p{margin:0;max-width:52ch}
+.zw-wnioski{margin-top:24px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:var(--r-s);padding:14px 18px}
+.zw-wnioski h3{margin:0 0 8px}
+.zw-wnioski ul{margin:0;padding-left:18px}
+.zw-wnioski li{margin:0 0 6px}
+@media (max-width:640px){.zw-klipy{grid-template-columns:1fr}.zw-karta{padding:12px}}
 .spis-sub .spis-t{font-weight:500}
 /* lightbox */
 .lbox{position:fixed;inset:0;z-index:50;background:rgba(8,8,8,.97);display:none;flex-direction:column}
@@ -250,7 +268,7 @@ video:fullscreen{object-fit:contain;background:#000}
 <body>
 <nav class="top" aria-label="Sekcje"><div class="wrap">
   <a class="brand" href="#gora">porusz<span>.ai</span></a>
-  <ul><li><a href="#test-2410">Test modeli 24.10</a></li><li><a href="#ozywianie">Ożywianie, noc</a></li><li><a href="#odnawianie">Odnawianie</a></li><li><a href="#zestaw">Cały zestaw</a></li><li><a href="#scenariusz-c">Scenariusz C</a></li><li><a href="#koszt">Koszty</a></li><li><a href="#prawo">Prawo</a></li><li><a href="#co-dalej">Co dalej</a></li></ul>
+  <ul><li><a href="#sciezka-zwycieska">Ścieżka zwycięska</a></li><li><a href="#test-2410">Test modeli 24.10</a></li><li><a href="#ozywianie">Ożywianie, noc</a></li><li><a href="#odnawianie">Odnawianie</a></li><li><a href="#zestaw">Cały zestaw</a></li><li><a href="#scenariusz-c">Scenariusz C</a></li><li><a href="#koszt">Koszty</a></li><li><a href="#prawo">Prawo</a></li><li><a href="#co-dalej">Co dalej</a></li></ul>
 </div></nav>
 <main class="wrap">
 
@@ -258,13 +276,13 @@ video:fullscreen{object-fit:contain;background:#000}
   <p class="eyebrow">porusz.ai · raport z testów · 23 do 24.10.2026</p>
   <h1>Jak modele AI ożywiają i odnawiają stare zdjęcia rodzinne: klipy, koszty i decyzje po dwóch dniach testów.</h1>
   <dl class="kpi">
-    <div><dt>Klipy na stronie</dt><dd>101</dd><p>w oryginalnej jakości z API</p></div>
+    <div><dt>Klipy na stronie</dt><dd>105</dd><p>w oryginalnej jakości z API</p></div>
     <div><dt>Modele wideo</dt><dd>10</dd><p>w teście 24.10, plus Veo 3.1 Lite z nocy</p></div>
     <div><dt>Klip Veo 3.1 Lite</dt><dd>0,24<span> USD</span></dd><p>8 s, 720p, 0,89 PLN</p></div>
-    <div><dt>Koszt całego testu</dt><dd>34,70<span> USD</span></dd><p>128,39 PLN, suma z logów</p></div>
+    <div><dt>Koszt całego testu</dt><dd>43,36<span> USD</span></dd><p>160,44 PLN, suma z logów</p></div>
   </dl>
   <div class="hero-dol">
-    <nav class="spis" aria-label="Spis treści"><h2>Spis treści</h2><ol><li><a href="#test-2410"><span class="spis-nr">01</span><span class="spis-t">Test modeli wideo, 24.10: zdjęcie z klasą</span><span class="spis-o">Jedno zdjęcie klasy odnowione i ożywione 10 modelami wideo, z ceną każdego klipu wobec limitu.</span></a></li><li><a href="#ozywianie"><span class="spis-nr">02</span><span class="spis-t">Ożywianie: seria v6 na całym zestawie (noc 23/24.10)</span><span class="spis-o">Nocna seria 60 klipów na całym zestawie, trzy sposoby zapętlenia i stary prompt obok nowego.</span></a></li><li><a href="#odnawianie"><span class="spis-nr">03</span><span class="spis-t">Odnawianie: przed i po oraz test ośmiu modeli</span><span class="spis-o">Suwaki przed i po na 6 zdjęciach, a pod nimi osiem modeli obrazowych porównanych na trzech zdjęciach.</span></a></li><li class="spis-sub"><a href="#przed-i-po"><span class="spis-nr" aria-hidden="true"></span><span class="spis-t">Odnawianie: przed i po</span><span class="spis-o">Suwak do porównania zdjęcia przed i po odnowieniu, z przełącznikiem na model zapasowy.</span></a></li><li><a href="#zestaw"><span class="spis-nr">04</span><span class="spis-t">Odnawianie całego zestawu: FLUX 3 Klein i Nano Banana Pro</span><span class="spis-o">Przed i po dla całego zestawu: FLUX 3 Klein na wszystkich zdjęciach, Nano Banana Pro na 20 najtrudniejszych.</span></a></li><li><a href="#scenariusz-c"><span class="spis-nr">05</span><span class="spis-t">Scenariusz C: odnów i ożyw</span><span class="spis-o">Odnów, potem ożyw: 10 zdjęć, klip ze starego zdjęcia obok klipu z odnowionego.</span></a></li><li><a href="#koszt"><span class="spis-nr">06</span><span class="spis-t">Koszty: cały test i nasz koszt na klienta</span><span class="spis-o">Ile kosztował cały test (34,70 USD) i ile kosztuje jedno zamówienie w trzech scenariuszach usługi.</span></a></li><li><a href="#prawo"><span class="spis-nr">07</span><span class="spis-t">Prawo</span><span class="spis-o">Obszary ryzyka prawnego z oceną i tym, co trzeba zrobić przed sprzedażą.</span></a></li><li><a href="#co-dalej"><span class="spis-nr">08</span><span class="spis-t">Co dalej: wnioski i decyzje otwarte</span><span class="spis-o">Wnioski oznaczone jako zmierzone albo interpretacja i 7 decyzji otwartych dla waszej spółki.</span></a></li></ol></nav>
+    <nav class="spis" aria-label="Spis treści"><h2>Spis treści</h2><ol><li><a href="#sciezka-zwycieska"><span class="spis-nr">01</span><span class="spis-t">Ścieżka zwycięska: odnowienie i ożywienie</span><span class="spis-o">Odnowienie Nano Banana Pro i klipy 1080p Veo 3.1 oraz HappyHorse 1.1 na 3 zdjęciach z lat 80. i 90., z kosztem pary.</span></a></li><li><a href="#test-2410"><span class="spis-nr">02</span><span class="spis-t">Test modeli wideo, 24.10: zdjęcie z klasą</span><span class="spis-o">Jedno zdjęcie klasy odnowione i ożywione 10 modelami wideo, z ceną każdego klipu wobec limitu.</span></a></li><li><a href="#ozywianie"><span class="spis-nr">03</span><span class="spis-t">Ożywianie: seria v6 na całym zestawie (noc 23/24.10)</span><span class="spis-o">Nocna seria 60 klipów na całym zestawie, trzy sposoby zapętlenia i stary prompt obok nowego.</span></a></li><li><a href="#odnawianie"><span class="spis-nr">04</span><span class="spis-t">Odnawianie: przed i po oraz test ośmiu modeli</span><span class="spis-o">Suwaki przed i po na 6 zdjęciach, a pod nimi osiem modeli obrazowych porównanych na trzech zdjęciach.</span></a></li><li class="spis-sub"><a href="#przed-i-po"><span class="spis-nr" aria-hidden="true"></span><span class="spis-t">Odnawianie: przed i po</span><span class="spis-o">Suwak do porównania zdjęcia przed i po odnowieniu, z przełącznikiem na model zapasowy.</span></a></li><li><a href="#zestaw"><span class="spis-nr">05</span><span class="spis-t">Odnawianie całego zestawu: FLUX 3 Klein i Nano Banana Pro</span><span class="spis-o">Przed i po dla całego zestawu: FLUX 3 Klein na wszystkich zdjęciach, Nano Banana Pro na 20 najtrudniejszych.</span></a></li><li><a href="#scenariusz-c"><span class="spis-nr">06</span><span class="spis-t">Scenariusz C: odnów i ożyw</span><span class="spis-o">Odnów, potem ożyw: 10 zdjęć, klip ze starego zdjęcia obok klipu z odnowionego.</span></a></li><li><a href="#koszt"><span class="spis-nr">07</span><span class="spis-t">Koszty: cały test i nasz koszt na klienta</span><span class="spis-o">Ile kosztował cały test (43,36 USD) i ile kosztuje jedno zamówienie w trzech scenariuszach usługi.</span></a></li><li><a href="#prawo"><span class="spis-nr">08</span><span class="spis-t">Prawo</span><span class="spis-o">Obszary ryzyka prawnego z oceną i tym, co trzeba zrobić przed sprzedażą.</span></a></li><li><a href="#co-dalej"><span class="spis-nr">09</span><span class="spis-t">Co dalej: wnioski i decyzje otwarte</span><span class="spis-o">Wnioski oznaczone jako zmierzone albo interpretacja i 7 decyzji otwartych dla waszej spółki.</span></a></li></ol></nav>
     <aside class="zasady" aria-labelledby="zasady-h"><h2 id="zasady-h">Zasady z 24.10</h2>
       <dl>
         <div><dt>Kadr święty</dt><dd>Te same proporcje co oryginał, bez przycinania i zoomu. Model bez 4:3 dostaje zdjęcie na płótnie 16:9 z pasami po bokach, a z wyniku wycinamy sam obszar zdjęcia.</dd></div>
@@ -277,8 +295,75 @@ video:fullscreen{object-fit:contain;background:#000}
     </aside>
   </div>
 </header>
+<section id="sciezka-zwycieska" data-nav="Ścieżka zwycięska">
+  <header class="sek-head"><p class="nr">01</p><div><h2>Ścieżka zwycięska: odnowienie i ożywienie</h2>
+  <p class="intro">Zdjęcia z lat 80. i 90., takie, jakie klienci mają w domowych albumach, a nie archiwalia. Najpierw odnowienie Nano Banana Pro: kolor, balans bieli, skóra i światło, a treść i kadr bez zmian. Potem z odnowionego zdjęcia dwa klipy Full HD 1080p po 8 s: Veo 3.1 i HappyHorse 1.1, kamera statyczna, animują się tylko ludzie.</p>
+  <dl class="sek-fakty"><div><dt>Co testowano</dt><dd>3 zdjęcia: suwak przed i po (A: Nano Banana Pro, B: hybryda), a na dwóch z nich po dwa klipy 1080p z odnowionego.</dd></div><div><dt>Dlaczego</dt><dd>Sprawdzenie zestawu, który wygrał wcześniejsze testy, na zdjęciach takich jak w zamówieniach.</dd></div><div><dt>Koszt</dt><dd>8,42 USD za cały test (z logu generacji), w tym 2,76 USD na błędną gałąź zdjęcia a2-06, której nie pokazujemy.</dd></div></dl>
+  </div></header>
+
+  <p class="meta">Suwak: przeciągnij uchwyt albo użyj strzałek; przyciski A i B pod suwakiem podmieniają warstwę „po”. Klipy mają zwykłe sterowanie odtwarzacza, startują bez dźwięku. Werdykty to wstępne oceny agenta oglądającego klatki (0, 4 i 8 s), nie ostateczna ocena twarzy.</p>
+  <div class="zw-lista"><article class="zw-karta" id="zw-a2-06"><figure class="pp-karta">
+  <div class="pp" style="aspect-ratio:1413/1024" data-x="50">
+    <img class="pp-przed" src="media/zwycieska/a2-06-oryginal.jpg" alt="a2-06: Klasa szkolna, ok. 1990: przed odnowieniem" width="1413" height="1024" loading="lazy" decoding="async" draggable="false">
+    <div class="pp-po"><img src="media/zwycieska/a2-06-A-nbpro.jpg" alt="a2-06: po odnowieniu Nano Banana Pro" width="1413" height="1024" loading="lazy" decoding="async" draggable="false"></div>
+    <span class="pp-et pp-et-l" aria-hidden="true">przed</span><span class="pp-et pp-et-p" aria-hidden="true">po</span>
+    <div class="pp-uchwyt" role="slider" tabindex="0" aria-label="a2-06: Klasa szkolna, ok. 1990: granica przed i po" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="50% przed, 50% po"><span class="pp-galka" aria-hidden="true"></span></div>
+  </div>
+  <figcaption><div class="pp-top"><h3>a2-06: Klasa szkolna, ok. 1990</h3><span class="tag">kolor</span></div>
+    <p class="meta">Model: <strong class="pp-model">A: Nano Banana Pro</strong> · koszt <span class="pp-koszt">0,139 USD</span></p>
+    <p class="meta">Oko: A lepsze (twarz 8, kolor 7, balans bieli 7, skóra 7, światło 7 na 10); B zachowuje więcej żółtego nalotu. Oryginał 1413×1024 px, odnowione 1413×1024 px; na suwaku kopie JPG do 1600 px. Hybryda B: jasność z oryginału, kolor z A, bez wywołania API.</p><div class="pp-przel" role="group" aria-label="Model w warstwie po"><button class="pp-war" type="button" data-src="media/zwycieska/a2-06-A-nbpro.jpg" data-model="A: Nano Banana Pro" data-koszt="0,139 USD" aria-pressed="true">A: Nano Banana Pro</button><button class="pp-war" type="button" data-src="media/zwycieska/a2-06-B-hybryda.jpg" data-model="B: hybryda" data-koszt="0 USD, liczona lokalnie" aria-pressed="false">B: hybryda</button></div></figcaption>
+</figure><div class="zw-klipy zw-brak"><p><strong>Klipy z poprawnego odnowienia w przygotowaniu.</strong> Pierwszy bieg poszedł na wersji z brązowym nalotem (błąd wykrywania trybu, nie pokazujemy go), a klipy z poprawionego odnowienia czekają na decyzję.</p></div></article><article class="zw-karta" id="zw-a2-03"><figure class="pp-karta">
+  <div class="pp" style="aspect-ratio:800/534" data-x="50">
+    <img class="pp-przed" src="media/zwycieska/a2-03-oryginal.jpg" alt="a2-03: Dzieci na łące, 1982: przed odnowieniem" width="800" height="534" loading="lazy" decoding="async" draggable="false">
+    <div class="pp-po"><img src="media/zwycieska/a2-03-A-nbpro.jpg" alt="a2-03: po odnowieniu Nano Banana Pro" width="800" height="534" loading="lazy" decoding="async" draggable="false"></div>
+    <span class="pp-et pp-et-l" aria-hidden="true">przed</span><span class="pp-et pp-et-p" aria-hidden="true">po</span>
+    <div class="pp-uchwyt" role="slider" tabindex="0" aria-label="a2-03: Dzieci na łące, 1982: granica przed i po" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="50% przed, 50% po"><span class="pp-galka" aria-hidden="true"></span></div>
+  </div>
+  <figcaption><div class="pp-top"><h3>a2-03: Dzieci na łące, 1982</h3><span class="tag">kolor</span></div>
+    <p class="meta">Model: <strong class="pp-model">A: Nano Banana Pro</strong> · koszt <span class="pp-koszt">0,139 USD</span></p>
+    <p class="meta">Oko: B lepsze, niska pewność (A 7/6/7/6/7, mocniej nasycone i wygładzona skóra; B 7/8/8/7/7). Oryginał 800×534 px, odnowione 800×534 px; na suwaku kopie JPG do 1600 px. Hybryda B: jasność z oryginału, kolor z A, bez wywołania API.</p><div class="pp-przel" role="group" aria-label="Model w warstwie po"><button class="pp-war" type="button" data-src="media/zwycieska/a2-03-A-nbpro.jpg" data-model="A: Nano Banana Pro" data-koszt="0,139 USD" aria-pressed="true">A: Nano Banana Pro</button><button class="pp-war" type="button" data-src="media/zwycieska/a2-03-B-hybryda.jpg" data-model="B: hybryda" data-koszt="0 USD, liczona lokalnie" aria-pressed="false">B: hybryda</button></div></figcaption>
+</figure><div class="zw-klipy"><figure class="zw-klip">
+      <video src="media/zwycieska/a2-03-veo31-1080p.mp4" poster="media/zwycieska/a2-03-veo31-1080p-poster.jpg" controls muted playsinline preload="metadata" width="1618" height="1080" style="aspect-ratio:1618/1080" aria-label="a2-03: Veo 3.1 1080p"></video>
+      <figcaption><p class="zw-model"><strong>Veo 3.1</strong> <span class="tm-rozdz">1080p</span></p>
+        <p class="meta">1,60 USD · generacja 136 s · 1618×1080 · 8,00 s</p>
+        <p class="zw-oko">Lepszy z pary: kamera stoi, ale w tle pojawiają się nowi ludzie, a twarze w 4 s i 8 s nie są oryginalne.</p></figcaption>
+    </figure><figure class="zw-klip">
+      <video src="media/zwycieska/a2-03-happyhorse11-1080p.mp4" poster="media/zwycieska/a2-03-happyhorse11-1080p-poster.jpg" controls muted playsinline preload="metadata" width="1762" height="1176" style="aspect-ratio:1762/1176" aria-label="a2-03: HappyHorse 1.1 1080p"></video>
+      <figcaption><p class="zw-model"><strong>HappyHorse 1.1</strong> <span class="tm-rozdz">1080p</span></p>
+        <p class="meta">1,02 USD · generacja 164 s · 1762×1176 · 8,12 s</p>
+        <p class="zw-oko">Twardy przeskok między 0 s a 4 s, kamera przybliża, inne twarze i ubrania.</p></figcaption>
+    </figure></div></article><article class="zw-karta" id="zw-pd33"><figure class="pp-karta">
+  <div class="pp" style="aspect-ratio:1600/1037" data-x="50">
+    <img class="pp-przed" src="media/zwycieska/pd33-oryginal.jpg" alt="pd33: Ojciec z synem, 1988: przed odnowieniem" width="1600" height="1037" loading="lazy" decoding="async" draggable="false">
+    <div class="pp-po"><img src="media/zwycieska/pd33-A-nbpro.jpg" alt="pd33: po odnowieniu Nano Banana Pro" width="1600" height="1037" loading="lazy" decoding="async" draggable="false"></div>
+    <span class="pp-et pp-et-l" aria-hidden="true">przed</span><span class="pp-et pp-et-p" aria-hidden="true">po</span>
+    <div class="pp-uchwyt" role="slider" tabindex="0" aria-label="pd33: Ojciec z synem, 1988: granica przed i po" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="50% przed, 50% po"><span class="pp-galka" aria-hidden="true"></span></div>
+  </div>
+  <figcaption><div class="pp-top"><h3>pd33: Ojciec z synem, 1988</h3><span class="tag">kolor</span></div>
+    <p class="meta">Model: <strong class="pp-model">A: Nano Banana Pro</strong> · koszt <span class="pp-koszt">0,139 USD</span></p>
+    <p class="meta">Oko: remis, lekko B (A i B po 7/7/7/7/7). Oryginał 1600×1037 px, odnowione 1600×1037 px; na suwaku kopie JPG do 1600 px. Hybryda B: jasność z oryginału, kolor z A, bez wywołania API.</p><div class="pp-przel" role="group" aria-label="Model w warstwie po"><button class="pp-war" type="button" data-src="media/zwycieska/pd33-A-nbpro.jpg" data-model="A: Nano Banana Pro" data-koszt="0,139 USD" aria-pressed="true">A: Nano Banana Pro</button><button class="pp-war" type="button" data-src="media/zwycieska/pd33-B-hybryda.jpg" data-model="B: hybryda" data-koszt="0 USD, liczona lokalnie" aria-pressed="false">B: hybryda</button></div></figcaption>
+</figure><div class="zw-klipy"><figure class="zw-klip">
+      <video src="media/zwycieska/pd33-veo31-1080p.mp4" poster="media/zwycieska/pd33-veo31-1080p-poster.jpg" controls muted playsinline preload="metadata" width="1666" height="1080" style="aspect-ratio:1666/1080" aria-label="pd33: Veo 3.1 1080p"></video>
+      <figcaption><p class="zw-model"><strong>Veo 3.1</strong> <span class="tm-rozdz">1080p</span></p>
+        <p class="meta">1,60 USD · generacja 248 s · 1666×1080 · 8,00 s</p>
+        <p class="zw-oko">Lepszy z pary: kamera stoi, wyraz twarzy zachowany, bez obcych obiektów.</p></figcaption>
+    </figure><figure class="zw-klip">
+      <video src="media/zwycieska/pd33-happyhorse11-1080p.mp4" poster="media/zwycieska/pd33-happyhorse11-1080p-poster.jpg" controls muted playsinline preload="metadata" width="1788" height="1160" style="aspect-ratio:1788/1160" aria-label="pd33: HappyHorse 1.1 1080p"></video>
+      <figcaption><p class="zw-model"><strong>HappyHorse 1.1</strong> <span class="tm-rozdz">1080p</span></p>
+        <p class="meta">1,02 USD · generacja 174 s · 1788×1160 · 8,12 s</p>
+        <p class="zw-oko">Zmienia ekspresję (uśmiech, mrużenie) i układa chłopca na brzuchu.</p></figcaption>
+    </figure></div></article></div>
+  <div class="zw-wnioski"><h3>Co z tego wynika</h3>
+    <ul>
+      <li><strong>Koszt pary:</strong> Nano Banana Pro + Veo 3.1 Full HD ok. 1,74 USD, Nano Banana Pro + HappyHorse 1.1 ok. 1,16 USD za jedno zdjęcie (odnowienie i jeden klip).</li>
+      <li><strong>Veo 3.1 wygrywa 2 do 1</strong> według Oka, agenta oceniającego klatki (a2-03 i pd33; HappyHorse lepszy tylko na odrzuconej gałęzi a2-06). To oceny wstępne z klatek, twarze trzeba obejrzeć 1:1 na pełnych klipach.</li>
+      <li><strong>Żaden klip bez poprawek nie jest finałem:</strong> Veo dorysowuje obcych ludzi w tle (a2-03), HappyHorse zmienia twarze i ekspresję.</li>
+      <li><strong>Koszt testu:</strong> 8,42 USD łącznie z logu (14 wpisów), poza tym ok. 0,14 USD za niezalogowane, przerwane odnowienie a2-03.</li>
+    </ul></div>
+</section>
+
 <section id="test-2410" data-nav="Test modeli 24.10">
-  <header class="sek-head"><p class="nr">01</p><div><h2>Test modeli wideo, 24.10: zdjęcie z klasą</h2>
+  <header class="sek-head"><p class="nr">02</p><div><h2>Test modeli wideo, 24.10: zdjęcie z klasą</h2>
   <p class="intro">Jedno zdjęcie (01, klasa szkolna, ok. 1990, ok. 15 osób, małe twarze) odnowione modelem Grok Imagine Image 2.0, potem ożywione 10 modelami wideo. Każdy klip startuje z odnowionego zdjęcia jako pierwszej klatki, ma ten sam prompt animacji i jest bez dźwięku. Klipy są w oryginalnej jakości z API, w naturalnym rozmiarze; przycisk Pełny ekran albo kliknięcie w klip otwiera go na cały ekran.</p>
   <dl class="sek-fakty"><div><dt>Co testowano</dt><dd>12 klipów zdjęcia 01 (w tym punkt odniesienia z nocy) oraz 3 klipy zdjęcia 02 z rundy 1.</dd></div><div><dt>Dlaczego</dt><dd>Sprawdzenie, jak modele radzą sobie z wieloma małymi twarzami w nowych zasadach z 24.10 i w limicie ceny klipu.</dd></div><div><dt>Koszt</dt><dd>11,64 USD z logu generacji (zdjęcie 01: 9,57, zdjęcie 02: 2,07, w tym odnowienia); limit testu 15 USD. Klipy z nocy na kartach odniesienia liczą się w serii v6.</dd></div></dl>
   </div></header>
@@ -440,7 +525,7 @@ video:fullscreen{object-fit:contain;background:#000}
 </section>
 
 <section id="ozywianie" data-nav="Ożywianie, noc">
-  <header class="sek-head"><p class="nr">02</p><div><h2>Ożywianie: seria v6 na całym zestawie (noc 23/24.10)</h2>
+  <header class="sek-head"><p class="nr">03</p><div><h2>Ożywianie: seria v6 na całym zestawie (noc 23/24.10)</h2>
   <p class="intro">Oryginał obok klipu. Kamera stoi, ruszają się tylko ludzie (prompt v6, subtelne emocje). Zabrudzenia widoczne w klipach pochodzą ze skanów: porównanie klatek z 23.10.2026 nie wykazało, żeby model je dodawał.</p>
   <dl class="sek-fakty"><div><dt>Co testowano</dt><dd>60 zdjęć (domena publiczna i zestaw dzieci A2, w tym trudne i uszkodzone), Veo 3.1 Lite, 8 s, 720p; do tego warianty pętli i porównanie z promptem v4b.</dd></div><div><dt>Dlaczego</dt><dd>Sprawdzenie stabilności, czasu i kosztu domyślnego przepływu na pełnym zestawie, zanim usługa przyjmie pierwszych klientów.</dd></div><div><dt>Koszt</dt><dd>seria 14,40 USD (61 prób po 0,24 USD za udany klip), pętle 0,96 USD.</dd></div></dl>
   </div></header>
@@ -679,9 +764,9 @@ video:fullscreen{object-fit:contain;background:#000}
 </section>
 
 <section id="odnawianie" data-nav="Odnawianie">
-  <header class="sek-head"><p class="nr">03</p><div><h2>Odnawianie: przed i po oraz test ośmiu modeli</h2>
-  <p class="intro">W waszej usłudze odnowienie idzie pierwsze, ożywienie drugie: model obrazowy czyści skan z rys, plam i szumu, a dopiero z czystej wersji powstaje klip (scenariusz C, sekcja 05). Na górze suwaki przed i po z nocnego odnawiania, niżej test ośmiu modeli, z którego wyszło dwóch kandydatów. W teście ośmiu modeli kliknięcie miniatury otwiera duży podgląd; przycisk lub klawisz O pokazuje oryginał, strzałki przechodzą między modelami.</p>
-  <dl class="sek-fakty"><div><dt>Co testowano</dt><dd>6 par przed i po (Nano Banana Pro, z przełącznikiem na FLUX 3 Klein) oraz 3 zdjęcia, każde przez 8 modeli (usuwanie rys i plam, poprawa ostrości), bez zmiany kadru.</dd></div><div><dt>Dlaczego</dt><dd>Wybór modelu do opcji odnowienia oraz do scenariusza C (odnów, potem ożyw).</dd></div><div><dt>Koszt</dt><dd>test ośmiu modeli 1,986 USD za 40 wywołań (z logu generacji); pary na suwakach pochodzą z odnawiania całego zestawu (sekcja 04), średnio 0,139 USD za zdjęcie Nano Banana Pro.</dd></div></dl>
+  <header class="sek-head"><p class="nr">04</p><div><h2>Odnawianie: przed i po oraz test ośmiu modeli</h2>
+  <p class="intro">W waszej usłudze odnowienie idzie pierwsze, ożywienie drugie: model obrazowy czyści skan z rys, plam i szumu, a dopiero z czystej wersji powstaje klip (scenariusz C, sekcja 06). Na górze suwaki przed i po z nocnego odnawiania, niżej test ośmiu modeli, z którego wyszło dwóch kandydatów. W teście ośmiu modeli kliknięcie miniatury otwiera duży podgląd; przycisk lub klawisz O pokazuje oryginał, strzałki przechodzą między modelami.</p>
+  <dl class="sek-fakty"><div><dt>Co testowano</dt><dd>6 par przed i po (Nano Banana Pro, z przełącznikiem na FLUX 3 Klein) oraz 3 zdjęcia, każde przez 8 modeli (usuwanie rys i plam, poprawa ostrości), bez zmiany kadru.</dd></div><div><dt>Dlaczego</dt><dd>Wybór modelu do opcji odnowienia oraz do scenariusza C (odnów, potem ożyw).</dd></div><div><dt>Koszt</dt><dd>test ośmiu modeli 1,986 USD za 40 wywołań (z logu generacji); pary na suwakach pochodzą z odnawiania całego zestawu (sekcja 05), średnio 0,139 USD za zdjęcie Nano Banana Pro.</dd></div></dl>
   </div></header>
 
   <div class="pod-sek pp-sek" id="przed-i-po">
@@ -834,7 +919,7 @@ video:fullscreen{object-fit:contain;background:#000}
 </section>
 
 <section id="zestaw" data-nav="Cały zestaw">
-  <header class="sek-head"><p class="nr">04</p><div><h2>Odnawianie całego zestawu: FLUX 3 Klein i Nano Banana Pro</h2>
+  <header class="sek-head"><p class="nr">05</p><div><h2>Odnawianie całego zestawu: FLUX 3 Klein i Nano Banana Pro</h2>
   <p class="intro">Przed i po dla każdego zdjęcia z zestawu, wszystkie pliki w pełnej rozdzielczości. Kliknij miniaturę, żeby powiększyć; klawisz O pokazuje stan przed.</p>
   <dl class="sek-fakty"><div><dt>Co testowano</dt><dd>60 zdjęć: FLUX 3 Klein na całym zestawie, Nano Banana Pro na 20 najtrudniejszych (najbardziej zniszczone, niskiej rozdzielczości, wyblakłe).</dd></div><div><dt>Dlaczego</dt><dd>Sprawdzenie dwóch kandydatów z testu ośmiu modeli na pełnym zestawie: czy trzymają kadr i ile to kosztuje w skali.</dd></div><div><dt>Koszt</dt><dd>3,310 USD z logu generacji.</dd></div></dl>
   </div></header>
@@ -860,7 +945,7 @@ video:fullscreen{object-fit:contain;background:#000}
 </section>
 
 <section id="scenariusz-c" data-nav="Scenariusz C">
-  <header class="sek-head"><p class="nr">05</p><div><h2>Scenariusz C: odnów i ożyw</h2>
+  <header class="sek-head"><p class="nr">06</p><div><h2>Scenariusz C: odnów i ożyw</h2>
   <p class="intro">Stare zdjęcie, wersja odnowiona, klip zrobiony ze starego (seria v6) i klip zrobiony z odnowionego. Przycisk odtwarza oba klipy naraz.</p>
   <dl class="sek-fakty"><div><dt>Co testowano</dt><dd>10 zdjęć z zestawu; klip Veo 3.1 Lite 8 s, prompt v6, z odnowionej wersji.</dd></div><div><dt>Dlaczego</dt><dd>Zabrudzenia w klipach pochodzą ze skanów, więc czystą wersję daje dopiero odnowienie przed ożywieniem; test sprawdza, ile to kosztuje i czy przechodzi bez błędów.</dd></div><div><dt>Koszt</dt><dd>2,40 USD za klipy (z logu generacji), średnio 0,240 USD na zdjęcie, bez kosztu odnowienia; wpisów nieudanych: 0.</dd></div></dl>
   </div></header>
@@ -880,15 +965,15 @@ video:fullscreen{object-fit:contain;background:#000}
 </section>
 
 <section id="koszt" data-nav="Koszty">
-  <header class="sek-head"><p class="nr">06</p><div><h2>Koszty: cały test i nasz koszt na klienta</h2>
+  <header class="sek-head"><p class="nr">07</p><div><h2>Koszty: cały test i nasz koszt na klienta</h2>
   <p class="intro">Tylko koszt API, bez cen sprzedaży. Kurs przyjęty: 1 USD = 3,70 PLN.</p>
-  <dl class="sek-fakty"><div><dt>Co testowano</dt><dd>Wszystkie generacje z logów testu oraz koszt jednego zamówienia w trzech scenariuszach usługi.</dd></div><div><dt>Dlaczego</dt><dd>Żeby wiedzieć, ile kosztował test i ile kosztuje nas jeden klient przy każdym scenariuszu.</dd></div><div><dt>Koszt</dt><dd>razem 34,70 USD (128,39 PLN) z logów.</dd></div></dl>
+  <dl class="sek-fakty"><div><dt>Co testowano</dt><dd>Wszystkie generacje z logów testu oraz koszt jednego zamówienia w trzech scenariuszach usługi.</dd></div><div><dt>Dlaczego</dt><dd>Żeby wiedzieć, ile kosztował test i ile kosztuje nas jeden klient przy każdym scenariuszu.</dd></div><div><dt>Koszt</dt><dd>razem 43,36 USD (160,44 PLN) z logów.</dd></div></dl>
   </div></header>
 
   <h3 class="h-pod">Zestawienie kosztów całego testu</h3>
   <div class="tabela-wrap"><table class="tab-koszt">
   <thead><tr><th scope="col">Etap</th><th scope="col">Kiedy</th><th scope="col">USD</th><th scope="col">PLN</th><th scope="col">Źródło</th></tr></thead>
-  <tbody><tr><th scope="row">Ożywianie, seria v6 (60 zdjęć)</th><td>noc 23/24.10</td><td class="num">14,40 USD</td><td class="num">53,28 PLN</td><td class="meta">log serii v6</td></tr><tr><th scope="row">Pętle i pozostałe generacje w pomocniku</th><td>20 do 24.10</td><td class="num">0,96 USD</td><td class="num">3,55 PLN</td><td class="meta">log usługi, 6 wpisów poza serią v6</td></tr><tr><th scope="row">Odnawianie, 8 modeli na 3 zdjęciach</th><td>23.10</td><td class="num">1,99 USD</td><td class="num">7,35 PLN</td><td class="meta">log generacji odnawiania</td></tr><tr><th scope="row">Odnawianie całego zestawu (Klein i Nano Banana Pro)</th><td>noc 24.10</td><td class="num">3,31 USD</td><td class="num">12,25 PLN</td><td class="meta">log generacji odnawiania zestawu</td></tr><tr><th scope="row">Scenariusz C, klipy z odnowionych zdjęć</th><td>noc 24.10</td><td class="num">2,40 USD</td><td class="num">8,88 PLN</td><td class="meta">log generacji scenariusza C</td></tr><tr><th scope="row">Test modeli wideo (zdjęcia 01 i 02)</th><td>24.10</td><td class="num">11,64 USD</td><td class="num">43,08 PLN</td><td class="meta">log generacji testu 24.10</td></tr><tr class="suma"><th scope="row">Razem</th><td></td><td class="num">34,70 USD</td><td class="num">128,39 PLN</td><td></td></tr></tbody></table></div>
+  <tbody><tr><th scope="row">Ożywianie, seria v6 (60 zdjęć)</th><td>noc 23/24.10</td><td class="num">14,40 USD</td><td class="num">53,28 PLN</td><td class="meta">log serii v6</td></tr><tr><th scope="row">Pętle i pozostałe generacje w pomocniku</th><td>20 do 24.10</td><td class="num">1,20 USD</td><td class="num">4,44 PLN</td><td class="meta">log usługi, 7 wpisów poza serią v6</td></tr><tr><th scope="row">Odnawianie, 8 modeli na 3 zdjęciach</th><td>23.10</td><td class="num">1,99 USD</td><td class="num">7,35 PLN</td><td class="meta">log generacji odnawiania</td></tr><tr><th scope="row">Odnawianie całego zestawu (Klein i Nano Banana Pro)</th><td>noc 24.10</td><td class="num">3,31 USD</td><td class="num">12,25 PLN</td><td class="meta">log generacji odnawiania zestawu</td></tr><tr><th scope="row">Scenariusz C, klipy z odnowionych zdjęć</th><td>noc 24.10</td><td class="num">2,40 USD</td><td class="num">8,88 PLN</td><td class="meta">log generacji scenariusza C</td></tr><tr><th scope="row">Test modeli wideo (zdjęcia 01 i 02)</th><td>24.10</td><td class="num">11,64 USD</td><td class="num">43,08 PLN</td><td class="meta">log generacji testu 24.10</td></tr><tr><th scope="row">Ścieżka zwycięska (Nano Banana Pro, Veo 3.1, HappyHorse 1.1)</th><td>24.10</td><td class="num">8,42 USD</td><td class="num">31,17 PLN</td><td class="meta">log generacji ścieżki zwycięskiej</td></tr><tr class="suma"><th scope="row">Razem</th><td></td><td class="num">43,36 USD</td><td class="num">160,44 PLN</td><td></td></tr></tbody></table></div>
   <p class="meta">Poza sumą: możliwy niezalogowany koszt ok. 0,07 USD za przerwane odnowienie zdjęcia 03; dwa przekroczenia czasu Nano Banana Pro mają w logu koszt 0, dostawca mógł je naliczyć. Klipy v4b do porównania pochodzą z wcześniejszej serii z 13.10 (0,48 USD za 4 pokazane klipy) i nie wchodzą do sumy.</p>
   <h3 class="h-pod">Scenariusze usługi: nasz koszt na jedno zamówienie</h3>
   <p class="meta">Wariant „z jedną powtórką” zakłada podwójny koszt, czyli najgorszy przypadek, gdy płacimy za dwie udane generacje (np. klient odrzuca pierwszy wynik).</p>
@@ -898,11 +983,11 @@ video:fullscreen{object-fit:contain;background:#000}
 <td class="num">0,24 USD<br><span class="meta">0,89 PLN</span></td><td class="num">0,48 USD<br><span class="meta">1,78 PLN</span></td><td>generacja: mediana 70 s, maks. 200 s; pętla ping-pong lokalnie</td><td>Model czasem nie oddaje klipu (możliwy filtr treści po stronie dostawcy): 1 z 61 prób w serii v6, każda naprawiona powtórką. Pomocnik powtarza do 3 razy; płacimy tylko za udaną generację.</td></tr><tr><th scope="row"><span class="lit">B</span> Odnów</th><td>Jedno odnowione zdjęcie w pełnej rozdzielczości modelu, z adnotacją AI</td>
 <td class="num">0,009 do 0,241 USD<br><span class="meta">0,03 do 0,89 PLN</span></td><td class="num">0,018 do 0,483 USD<br><span class="meta">0,07 do 1,79 PLN</span></td><td>średnio 10 do 106 s zależnie od modelu</td><td>Model niedostępny (HTTP 429), przekroczony czas odpowiedzi, HTTP 404 w pierwszym przebiegu; część modeli zmienia proporcje kadru (3 z 8). Koszt zależy od wybranego modelu: od 0,009 (FLUX 3 Klein) do 0,241 (GPT-5.4 Image 2) USD.</td></tr><tr><th scope="row"><span class="lit">C</span> Odnów i ożyw</th><td>Odnowione zdjęcie oraz klip i pętla zrobione z czystej wersji</td>
 <td class="num">0,249 do 0,481 USD<br><span class="meta">0,92 do 1,78 PLN</span></td><td class="num">0,498 do 0,963 USD<br><span class="meta">1,84 do 3,56 PLN</span></td><td>odnowienie 10 do 106 s plus generacja klipu (mediana 70 s)</td><td>Suma ryzyk A i B. Wniosek, niezmierzone: dwa modele po kolei to dwie okazje do zmiany twarzy, więc kontrola po odnowieniu jest ważniejsza niż w A.</td></tr></tbody></table></div>
-  <p class="meta">Koszty B i C to przedział od najtańszego do najdroższego modelu z wynikiem; koszt każdego modelu osobno jest w tabeli w sekcji Odnawianie. Płatności i strona sprzedażowa po waszej stronie, poza tym rachunkiem. W teście 24.10 modele wideo inne niż Veo 3.1 Lite kosztowały od 0,25 do 1,60 USD za klip (karty w sekcji 01).</p>
+  <p class="meta">Koszty B i C to przedział od najtańszego do najdroższego modelu z wynikiem; koszt każdego modelu osobno jest w tabeli w sekcji Odnawianie. Płatności i strona sprzedażowa po waszej stronie, poza tym rachunkiem. W teście 24.10 modele wideo inne niż Veo 3.1 Lite kosztowały od 0,25 do 1,60 USD za klip (karty w sekcji 02).</p>
 </section>
 
 <section id="prawo" data-nav="Prawo">
-  <header class="sek-head"><p class="nr">07</p><div><h2>Prawo</h2>
+  <header class="sek-head"><p class="nr">08</p><div><h2>Prawo</h2>
   <p class="badge">Opracowanie robocze, do przeglądu przez dział prawny.</p>
   <p class="intro">Prawo: ożywianie i odnawianie starych zdjęć (porusz.ai). Stan na 23.10.2026. To analiza na tekstach ustaw, nie opinia radcy. Skala ryzyka: 1 niskie, 5 wysokie. Werdykt: podpisz po zmianach, sprzedaż po punktach z list niżej.</p></div></header>
   <div class="karty-pr"><article class="karta-pr"><h3>1. Wizerunek osób na zdjęciu</h3><p>Samo wykonanie klipu dla zamawiającego nie jest rozpowszechnianiem wizerunku. Problem zaczyna się, gdy klient opublikuje klip bez zgody osób żyjących. Roszczenia z wizerunku wygasają 20 lat po śmierci osoby, ale bliscy zmarłych mogą jeszcze powoływać się na dobra osobiste (zakres: niezweryfikowane).</p>
@@ -924,10 +1009,10 @@ video:fullscreen{object-fit:contain;background:#000}
 </section>
 
 <section id="co-dalej" data-nav="Co dalej">
-  <header class="sek-head"><p class="nr">08</p><div><h2>Co dalej: wnioski i decyzje otwarte</h2>
+  <header class="sek-head"><p class="nr">09</p><div><h2>Co dalej: wnioski i decyzje otwarte</h2>
   <p class="intro">Każde zdanie ma etykietę: <span class="tag tag-ok">zmierzone</span> to liczby z logów, <span class="tag tag-wn">wniosek</span> to interpretacja zespołu testującego.</p></div></header>
   <ol class="rek"><li><span class="tag tag-ok">zmierzone</span> Seria v6 na Veo 3.1 Lite: gotowe klipy 60 na 61 prób; nieudanych prób: 1, komunikat dostawcy: brak wyniku, możliwy filtr treści; każdą z nich naprawiła powtórka; mediana generacji 70 s, najdłuższa 200 s, koszt 0,24 USD za klip.</li><li><span class="tag tag-ok">zmierzone</span> Na czterech zdjęciach ping-pong domyka pętlę najlepiej (29 do 44 dB), xfade słabiej (15 do 35 dB), a zwykły klip skacze przy zapętleniu (13 do 18 dB).</li><li><span class="tag tag-ok">zmierzone</span> W odnawianiu wynik dało 7 z 8 modeli; koszt na zdjęcie od 0,009 USD (FLUX 3 Klein) do 0,241 USD (GPT-5.4 Image 2); proporcje kadru o więcej niż 2% zmieniają: Seedream 5.0 Pro, Nano Banana Pro, GPT-5.4 Image 2.</li><li><span class="tag tag-ok">zmierzone</span> Scenariusz C sprawdzony na 10 zdjęciach, wpisów nieudanych: 0; razem z odnowieniem to 0,38 USD przy Nano Banana Pro albo 0,25 USD przy FLUX 3 Klein.</li><li><span class="tag tag-ok">zmierzone</span> Test 24.10, zdjęcie 01: 11 klipów z odnowionego zdjęcia; w celu 1 USD mieści się 6, w limicie 1,50 USD kolejne 4, ponad limit 1. Żaden model nie zwrócił pustego klipu.</li><li><span class="tag tag-wn">wniosek</span> Zabrudzenia w klipach pochodzą ze skanów, a nie z modelu, więc ożywianie samo nie czyści zdjęcia; czystą wersję daje dopiero scenariusz C.</li><li><span class="tag tag-wn">wniosek</span> Rekomendacja z nocy jako domyślny przepływ: Veo 3.1 Lite, 8 sekund, prompt v6, automatyczna powtórka do trzech prób i pętla ping-pong 16 sekund jako plik dla klienta. Test 24.10 może tę rekomendację zmienić po ocenie twarzy.</li><li><span class="tag tag-wn">wniosek</span> Odnawianie jako osobna opcja dopiero po ocenie wizualnej, z wyborem jednego modelu spośród tych, które zachowują proporcje kadru, bo zdjęcie klienta nie powinno zostać przycięte.</li><li><span class="tag tag-wn">wniosek</span> Przed sprzedażą zostają sprawy z sekcji prawnej: oznaczenie AI w pliku, bramka treści dla zdjęć dzieci i umowa między nami a wami.</li></ol>
-  <div class="decyzje"><h3>Decyzje otwarte</h3><ol><li><strong>Model wideo do usługi.</strong> Wybór po ocenie twarzy w sekcji 01: Veo 3.1 Lite z nocy czy jeden z modeli 24.10 w celu 1 USD albo w limicie 1,50 USD.</li><li><strong>Rozdzielczość klipu.</strong> 720p za 0,24 USD (noc) czy 1080p za 0,40 USD (Veo 3.1 Lite, 24.10).</li><li><strong>Domyślna pętla.</strong> Ping-pong czy xfade (sekcja 02, warianty pętli).</li><li><strong>Model odnawiania.</strong> Nano Banana Pro potwierdzony przez Piotra, FLUX 3 Klein jako zapas (sekcje 03 i 04); test trzech dróg odnawiania w toku.</li><li><strong>Scenariusz C od startu.</strong> Czy oferujemy odnów i ożyw od pierwszego dnia (sekcja 05).</li><li><strong>Proporcje modeli 4:3.</strong> Ocena wzrokowa, czy modele 4:3 z testu 24.10 lekko przycinają lub rozciągają kadr.</li><li><strong>Sprawy prawne.</strong> Oznaczenie AI w pliku, bramka treści dla zdjęć dzieci, umowa między nami a wami (sekcja Prawo).</li></ol></div>
+  <div class="decyzje"><h3>Decyzje otwarte</h3><ol><li><strong>Model wideo do usługi.</strong> Wybór po ocenie twarzy w sekcji 02: Veo 3.1 Lite z nocy czy jeden z modeli 24.10 w celu 1 USD albo w limicie 1,50 USD.</li><li><strong>Rozdzielczość klipu.</strong> 720p za 0,24 USD (noc) czy 1080p za 0,40 USD (Veo 3.1 Lite, 24.10).</li><li><strong>Domyślna pętla.</strong> Ping-pong czy xfade (sekcja 03, warianty pętli).</li><li><strong>Model odnawiania.</strong> Nano Banana Pro potwierdzony przez Piotra, FLUX 3 Klein jako zapas (sekcje 04 i 05); test trzech dróg odnawiania w toku.</li><li><strong>Scenariusz C od startu.</strong> Czy oferujemy odnów i ożyw od pierwszego dnia (sekcja 06).</li><li><strong>Proporcje modeli 4:3.</strong> Ocena wzrokowa, czy modele 4:3 z testu 24.10 lekko przycinają lub rozciągają kadr.</li><li><strong>Sprawy prawne.</strong> Oznaczenie AI w pliku, bramka treści dla zdjęć dzieci, umowa między nami a wami (sekcja Prawo).</li></ol></div>
   <details class="raport"><summary>Raport z serii v6</summary><div class="md"><h3>RAPORT serii v6 (veo-3.1-lite, 8 s, prompt v6-emocje)</h3>
 <p>Zdjęć: 60. OK: 60, błąd: 0, zablokowane: 0. Prób łącznie: 61, z błędem API/filtra: 1. Koszt rzeczywisty (suma usage z prób): 14.40 USD. Saldo po: 30.86 USD (przed: 47.11). Czas generacji: 43 min. Zdjęcia w zdjecia-piotra: 0.</p>
 <h4>Największy ruch (najniższy min PSNR vs klatka 0)</h4>
@@ -964,7 +1049,7 @@ video:fullscreen{object-fit:contain;background:#000}
 </section>
 <footer>
   <p class="ai"><strong>Oznaczenie AI (AI Act, art. 50):</strong> wszystkie klipy wideo i odnowione obrazy na tej stronie zostały wygenerowane przez modele sztucznej inteligencji. Oryginały pochodzą z testowego zestawu zdjęć z domeny publicznej i zestawu A2.</p>
-  <p class="meta">Dane pochodzą z logów generacji (koszt i czas zapisane przez dostawcę modelu), pomiarów klatek i plików wynikowych. Klipy i zdjęcia bez przekodowania; postery to pierwsze klatki w małym rozmiarze, a suwaki przed i po używają kopii JPG do 1600 px. Zbudowano 24.10.2026 10:17.</p>
+  <p class="meta">Dane pochodzą z logów generacji (koszt i czas zapisane przez dostawcę modelu), pomiarów klatek i plików wynikowych. Klipy i zdjęcia bez przekodowania; postery to pierwsze klatki w małym rozmiarze, a suwaki przed i po używają kopii JPG do 1600 px. Zbudowano 24.10.2026 10:38.</p>
 </footer>
 </main>
 <div class="lbox" id="lbox" role="dialog" aria-modal="true" aria-label="Podgląd obrazu">
@@ -989,6 +1074,7 @@ video:fullscreen{object-fit:contain;background:#000}
   }
   function graj(v){var p=v.play();if(p&&p.catch)p.catch(function(){});}
   document.querySelectorAll('video').forEach(function(v){
+    if(v.hasAttribute('controls'))return;
     var w=document.createElement('div');w.className='vbox';v.parentNode.insertBefore(w,v);w.appendChild(v);
     var b=document.createElement('button');b.className='play';b.type='button';
     b.setAttribute('aria-label','Odtwórz: '+(v.getAttribute('aria-label')||'klip'));w.appendChild(b);
