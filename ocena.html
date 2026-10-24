@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#111111">
+<title>porusz.ai: ocena klipów</title>
+<style>:root{
+  --bg:#111111; --surface:#181818; --surface-2:#202020; --line:#2a2928; --line-2:#3a3836;
+  --text:#EAE6E5; --muted:#a8a29e; --faint:#8f8984;
+  --accent:#c8a86b; --accent-ink:#111111; --accent-soft:rgba(200,168,107,.13);
+  --ok:#9fc29a; --media-bg:#0a0a0a;
+  --r:10px; --r-s:6px; --gap:16px; --gap-l:32px; --wrap:1180px; --pad:16px;
+  --fs:16px; --fs-s:14px; --fs-xs:12.5px; --lh:1.55; --h1:24px; --h2:20px; --h3:17px;
+  --t:160ms; --tap:48px; --star-off:#4a4643;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{margin:0;background:var(--bg);color:var(--text);font:var(--fs)/var(--lh) var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--accent)}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--pad)}
+.pasek{position:sticky;top:0;z-index:20;background:rgba(17,17,17,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.pasek .wrap{display:flex;align-items:center;gap:8px;min-height:60px;padding-top:6px;padding-bottom:6px}
+.licznik{flex:1;min-width:0;font-size:var(--fs-s);color:var(--muted);line-height:1.25}
+.licznik b{color:var(--text);font-size:var(--fs);font-variant-numeric:tabular-nums}
+.postep{display:block;height:3px;background:var(--line-2);border-radius:2px;margin-top:5px;overflow:hidden}
+.postep i{display:block;height:100%;width:0;background:var(--accent);transition:width var(--t)}
+.btn{min-height:44px;padding:0 14px;border-radius:var(--r-s);border:1px solid var(--line-2);background:var(--surface-2);color:var(--text);font:600 var(--fs-s)/1 var(--font);cursor:pointer;white-space:nowrap;transition:background var(--t),border-color var(--t)}
+.btn:hover,.btn:focus-visible{border-color:var(--accent)}
+.btn-glowny{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn-glowny:hover,.btn-glowny:focus-visible{background:#d6b87e}
+.btn:disabled{opacity:.45;cursor:default}
+.hero{padding:24px 0 8px}
+.eyebrow{margin:0 0 8px;color:var(--accent);font-size:var(--fs-xs);letter-spacing:.06em;text-transform:uppercase}
+h1{font-size:var(--h1);line-height:1.2;margin:0 0 10px;font-weight:650}
+.lead{margin:0 0 16px;color:var(--muted);font-size:var(--fs-s);max-width:62ch}
+.spis{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+.spis a{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);text-decoration:none;font-size:var(--fs-s)}
+.spis a b{color:var(--text);font-weight:600;white-space:nowrap}
+.spis a span{color:var(--faint);font-variant-numeric:tabular-nums}
+.spis a:hover,.spis a:focus-visible{border-color:var(--accent);color:var(--text)}
+.grupa{padding:28px 0 4px;border-top:1px solid var(--line);margin-top:20px}
+.g-nr{margin:0;color:var(--accent);font-size:var(--fs-xs);letter-spacing:.06em;text-transform:uppercase}
+.g-head h2{font-size:var(--h2);margin:2px 0 6px;font-weight:650;line-height:1.25}
+.g-wstep{margin:0 0 16px;color:var(--muted);font-size:var(--fs-s);max-width:70ch}
+.karta{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);margin:0 0 var(--gap);overflow:hidden;transition:border-color var(--t)}
+.karta.oceniona{border-color:var(--line-2)}
+.para{display:grid;grid-template-columns:1fr;gap:2px;background:var(--media-bg)}
+.wejscie{display:grid;gap:2px}
+.wejscie.we-2{grid-template-columns:1fr 1fr}
+figure{margin:0}
+.we{position:relative;background:var(--media-bg)}
+.we img,.klip video{display:block;width:100%;height:auto;background:var(--media-bg)}
+.we img{aspect-ratio:auto;object-fit:contain}
+.we figcaption{position:absolute;left:6px;bottom:6px;padding:2px 7px;border-radius:4px;background:rgba(17,17,17,.78);color:var(--text);font-size:var(--fs-xs);line-height:1.4}
+.klip video{max-height:78vh;object-fit:contain}
+.podpis{padding:12px 14px 0}
+.podpis h3{margin:0;font-size:var(--h3);font-weight:650;line-height:1.3}
+.rozdz{font-weight:500;color:var(--muted);font-size:var(--fs-s)}
+.suf{display:inline-block;font-weight:500;font-size:var(--fs-xs);color:var(--accent);background:var(--accent-soft);border-radius:4px;padding:1px 6px;vertical-align:2px}
+.koszt{margin:4px 0 0;font-variant-numeric:tabular-nums}
+.koszt strong{font-size:var(--fs)}
+.koszt small{font-size:var(--fs-xs);color:var(--muted)}
+.meta{display:block;font-size:var(--fs-xs);color:var(--faint)}
+.ocena{padding:8px 14px 14px}
+.gwiazdki{display:flex;align-items:center;gap:2px;margin:0 0 8px}
+.gw{width:var(--tap);height:var(--tap);display:grid;place-items:center;padding:0;border:0;background:none;border-radius:var(--r-s);cursor:pointer;color:var(--star-off);-webkit-tap-highlight-color:transparent;transition:color var(--t),background var(--t)}
+.gw svg{width:34px;height:34px;fill:currentColor}
+.gw.wl{color:var(--accent)}
+.gw:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+@media (hover:hover){.gwiazdki:hover .gw{color:var(--accent)}.gwiazdki .gw:hover~.gw{color:var(--star-off)}}
+.wynik{margin-left:8px;font-size:var(--fs-s);color:var(--muted);font-variant-numeric:tabular-nums}
+.kom{display:block}
+.kom textarea{display:block;width:100%;min-height:48px;resize:vertical;padding:10px 12px;border-radius:var(--r-s);border:1px solid var(--line-2);background:var(--bg);color:var(--text);font:16px/1.4 var(--font)}
+.kom textarea:focus{outline:none;border-color:var(--accent)}
+.kom textarea::placeholder{color:var(--faint)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+footer{border-top:1px solid var(--line);margin-top:28px;padding:20px 0 40px;font-size:var(--fs-s);color:var(--muted)}
+footer a{display:inline-flex;align-items:center;min-height:44px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--text);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:600;font-size:var(--fs-s);transition:opacity var(--t),transform var(--t);z-index:30}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (min-width:900px){
+  :root{--pad:32px;--h1:30px;--h2:24px}
+  .para{grid-template-columns:1fr 1fr;align-items:center}
+  .para.we-2{grid-template-columns:1fr 1fr 1fr}
+  .para.we-2 .wejscie{display:contents}
+  .podpis,.ocena{padding-left:18px;padding-right:18px}
+  .ocena{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
+  .gwiazdki{margin:0}
+}
+@media (max-width:479px){.licznik .lab{display:block}}
+.lic{white-space:nowrap}
+@media (max-width:380px){.btn{padding:0 10px}.licznik{font-size:var(--fs-xs)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="pasek"><div class="wrap">
+  <p class="licznik" aria-live="polite"><span class="lab">Ocenione</span> <span class="lic"><b id="x">0</b> z <b>23</b></span><span class="postep" aria-hidden="true"><i id="bar"></i></span></p>
+  <button class="btn btn-glowny" id="kopiuj" type="button">Skopiuj ocenę</button>
+  <button class="btn" id="json" type="button">Pobierz JSON</button>
+</div></div>
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">porusz.ai · ocena klipów</p>
+    <h1>Które ożywienie idzie dalej?</h1>
+    <p class="lead">Każda karta to zdjęcie, które poszło do modelu, i klip z niego. Daj od 1 do 5 gwiazdek (drugie dotknięcie tej samej gwiazdki kasuje ocenę), dopisz uwagę, jeśli chcesz. Oceny zapisują się w tym telefonie. Na końcu „Skopiuj ocenę” i wklej tekst na czat. Koszt w złotych liczony po kursie 3,9247 zł za dolara, za jeden klip, bez odnowienia zdjęcia.</p>
+    <nav class="spis" aria-label="Zdjęcia"><a href="#a2-06-nb"><b>a2-06</b> Klasa szkolna, ok. 1990 <span>4</span></a><a href="#a2-03-nb"><b>a2-03</b> Dzieci na łące, 1982 <span>2</span></a><a href="#pd33-nb"><b>pd33</b> Ojciec z synem, 1988 <span>2</span></a><a href="#a2-06-grok"><b>a2-06</b> Klasa szkolna, ok. 1990 (test modeli 01) <span>12</span></a><a href="#a2-07-grok"><b>a2-07</b> Przedszkole przy fontannie, 1985 (test modeli 02) <span>3</span></a></nav>
+  </section>
+  <section class="grupa" id="a2-06-nb">
+  <header class="g-head"><p class="g-nr">Zdjęcie a2-06</p><h2>Klasa szkolna, ok. 1990</h2><p class="g-wstep">Ścieżka zwycięska: skan odnowiony przez Nano Banana Pro, z tego zdjęcia klip 1080p, 8 s. Po lewej skan i odnowienie. Klipów: 4.</p></header>
+  <article class="karta" data-key="a2-06:veo31lite" data-label="a2-06 Veo 3.1 Lite 1080p" id="k-a2-06-veo31lite">
+  <div class="para we-2">
+    <div class="wejscie we-2"><figure class="we"><img src="media/zwycieska/a2-06-oryginal.jpg" width="1413" height="1024" loading="lazy" decoding="async" alt="a2-06, skan"><figcaption>skan</figcaption></figure><figure class="we"><img src="media/zwycieska/a2-06-A-nbpro.jpg" width="1413" height="1024" loading="lazy" decoding="async" alt="a2-06, odnowione, Nano Banana Pro"><figcaption>odnowione, Nano Banana Pro</figcaption></figure></div>
+    <figure class="klip"><video src="media/zwycieska/a2-06-veo31lite-1080p.mp4" poster="media/zwycieska/a2-06-veo31lite-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1490" height="1080" aria-label="a2-06 Veo 3.1 Lite 1080p"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Veo 3.1 Lite <span class="rozdz">1080p</span></h3>
+    <p class="koszt"><strong>1,57 zł</strong> <small>(0,40 USD)</small> <span class="meta">za klip · 8,0 s · 1490×1080</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 Veo 3.1 Lite 1080p"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 Veo 3.1 Lite 1080p</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="a2-06:veo31fast" data-label="a2-06 Veo 3.1 Fast 1080p" id="k-a2-06-veo31fast">
+  <div class="para we-2">
+    <div class="wejscie we-2"><figure class="we"><img src="media/zwycieska/a2-06-oryginal.jpg" width="1413" height="1024" loading="lazy" decoding="async" alt="a2-06, skan"><figcaption>skan</figcaption></figure><figure class="we"><img src="media/zwycieska/a2-06-A-nbpro.jpg" width="1413" height="1024" loading="lazy" decoding="async" alt="a2-06, odnowione, Nano Banana Pro"><figcaption>odnowione, Nano Banana Pro</figcaption></figure></div>
+    <figure class="klip"><video src="media/zwycieska/a2-06-veo31fast-1080p.mp4" poster="media/zwycieska/a2-06-veo31fast-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1490" height="1080" aria-label="a2-06 Veo 3.1 Fast 1080p"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Veo 3.1 Fast <span class="rozdz">1080p</span></h3>
+    <p class="koszt"><strong>3,14 zł</strong> <small>(0,80 USD)</small> <span class="meta">za klip · 8,0 s · 1490×1080</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 Veo 3.1 Fast 1080p"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 Veo 3.1 Fast 1080p</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="a2-06:veo31" data-label="a2-06 Veo 3.1 1080p" id="k-a2-06-veo31">
+  <div class="para we-2">
+    <div class="wejscie we-2"><figure class="we"><img src="media/zwycieska/a2-06-oryginal.jpg" width="1413" height="1024" loading="lazy" decoding="async" alt="a2-06, skan"><figcaption>skan</figcaption></figure><figure class="we"><img src="media/zwycieska/a2-06-A-nbpro.jpg" width="1413" height="1024" loading="lazy" decoding="async" alt="a2-06, odnowione, Nano Banana Pro"><figcaption>odnowione, Nano Banana Pro</figcaption></figure></div>
+    <figure class="klip"><video src="media/zwycieska/a2-06-veo31-1080p.mp4" poster="media/zwycieska/a2-06-veo31-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1490" height="1080" aria-label="a2-06 Veo 3.1 1080p"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Veo 3.1 <span class="rozdz">1080p</span></h3>
+    <p class="koszt"><strong>6,28 zł</strong> <small>(1,60 USD)</small> <span class="meta">za klip · 8,0 s · 1490×1080</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 Veo 3.1 1080p"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 Veo 3.1 1080p</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="a2-06:hh11" data-label="a2-06 HappyHorse 1.1 1080p" id="k-a2-06-hh11">
+  <div class="para we-2">
+    <div class="wejscie we-2"><figure class="we"><img src="media/zwycieska/a2-06-oryginal.jpg" width="1413" height="1024" loading="lazy" decoding="async" alt="a2-06, skan"><figcaption>skan</figcaption></figure><figure class="we"><img src="media/zwycieska/a2-06-A-nbpro.jpg" width="1413" height="1024" loading="lazy" decoding="async" alt="a2-06, odnowione, Nano Banana Pro"><figcaption>odnowione, Nano Banana Pro</figcaption></figure></div>
+    <figure class="klip"><video src="media/zwycieska/a2-06-happyhorse11-1080p.mp4" poster="media/zwycieska/a2-06-happyhorse11-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1692" height="1226" aria-label="a2-06 HappyHorse 1.1 1080p"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>HappyHorse 1.1 <span class="rozdz">1080p</span></h3>
+    <p class="koszt"><strong>4,01 zł</strong> <small>(1,02 USD)</small> <span class="meta">za klip · 8,1 s · 1692×1226</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 HappyHorse 1.1 1080p"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 HappyHorse 1.1 1080p</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article>
+</section><section class="grupa" id="a2-03-nb">
+  <header class="g-head"><p class="g-nr">Zdjęcie a2-03</p><h2>Dzieci na łące, 1982</h2><p class="g-wstep">Ścieżka zwycięska: odnowienie Nano Banana Pro, klip 1080p, 8 s. Klipów: 2.</p></header>
+  <article class="karta" data-key="a2-03:veo31" data-label="a2-03 Veo 3.1 1080p" id="k-a2-03-veo31">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/zwycieska/a2-03-A-nbpro.jpg" width="800" height="534" loading="lazy" decoding="async" alt="a2-03, odnowione, Nano Banana Pro"><figcaption>odnowione, Nano Banana Pro</figcaption></figure></div>
+    <figure class="klip"><video src="media/zwycieska/a2-03-veo31-1080p.mp4" poster="media/zwycieska/a2-03-veo31-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1618" height="1080" aria-label="a2-03 Veo 3.1 1080p"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Veo 3.1 <span class="rozdz">1080p</span></h3>
+    <p class="koszt"><strong>6,28 zł</strong> <small>(1,60 USD)</small> <span class="meta">za klip · 8,0 s · 1618×1080</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-03 Veo 3.1 1080p"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-03 Veo 3.1 1080p</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="a2-03:hh11" data-label="a2-03 HappyHorse 1.1 1080p" id="k-a2-03-hh11">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/zwycieska/a2-03-A-nbpro.jpg" width="800" height="534" loading="lazy" decoding="async" alt="a2-03, odnowione, Nano Banana Pro"><figcaption>odnowione, Nano Banana Pro</figcaption></figure></div>
+    <figure class="klip"><video src="media/zwycieska/a2-03-happyhorse11-1080p.mp4" poster="media/zwycieska/a2-03-happyhorse11-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1762" height="1176" aria-label="a2-03 HappyHorse 1.1 1080p"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>HappyHorse 1.1 <span class="rozdz">1080p</span></h3>
+    <p class="koszt"><strong>4,01 zł</strong> <small>(1,02 USD)</small> <span class="meta">za klip · 8,1 s · 1762×1176</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-03 HappyHorse 1.1 1080p"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-03 HappyHorse 1.1 1080p</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article>
+</section><section class="grupa" id="pd33-nb">
+  <header class="g-head"><p class="g-nr">Zdjęcie pd33</p><h2>Ojciec z synem, 1988</h2><p class="g-wstep">Ścieżka zwycięska: odnowienie Nano Banana Pro, klip 1080p, 8 s. Klipów: 2.</p></header>
+  <article class="karta" data-key="pd33:veo31" data-label="pd33 Veo 3.1 1080p" id="k-pd33-veo31">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/zwycieska/pd33-A-nbpro.jpg" width="1600" height="1037" loading="lazy" decoding="async" alt="pd33, odnowione, Nano Banana Pro"><figcaption>odnowione, Nano Banana Pro</figcaption></figure></div>
+    <figure class="klip"><video src="media/zwycieska/pd33-veo31-1080p.mp4" poster="media/zwycieska/pd33-veo31-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1666" height="1080" aria-label="pd33 Veo 3.1 1080p"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Veo 3.1 <span class="rozdz">1080p</span></h3>
+    <p class="koszt"><strong>6,28 zł</strong> <small>(1,60 USD)</small> <span class="meta">za klip · 8,0 s · 1666×1080</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: pd33 Veo 3.1 1080p"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: pd33 Veo 3.1 1080p</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="pd33:hh11" data-label="pd33 HappyHorse 1.1 1080p" id="k-pd33-hh11">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/zwycieska/pd33-A-nbpro.jpg" width="1600" height="1037" loading="lazy" decoding="async" alt="pd33, odnowione, Nano Banana Pro"><figcaption>odnowione, Nano Banana Pro</figcaption></figure></div>
+    <figure class="klip"><video src="media/zwycieska/pd33-happyhorse11-1080p.mp4" poster="media/zwycieska/pd33-happyhorse11-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1788" height="1160" aria-label="pd33 HappyHorse 1.1 1080p"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>HappyHorse 1.1 <span class="rozdz">1080p</span></h3>
+    <p class="koszt"><strong>4,01 zł</strong> <small>(1,02 USD)</small> <span class="meta">za klip · 8,1 s · 1788×1160</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: pd33 HappyHorse 1.1 1080p"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: pd33 HappyHorse 1.1 1080p</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article>
+</section><section class="grupa" id="a2-06-grok">
+  <header class="g-head"><p class="g-nr">Zdjęcie a2-06</p><h2>Klasa szkolna, ok. 1990 (test modeli 01)</h2><p class="g-wstep">To samo zdjęcie co wyżej, ale odnowione przez Grok Imagine Image 2.0; jedenaście modeli wideo na jednym wejściu. Ostatnia karta to klip z nocy, zrobiony prosto ze skanu. Klipów: 12.</p></header>
+  <article class="karta" data-key="t01:veo31-1080p" data-label="a2-06 Veo 3.1 1080p (odn. Grok)" id="k-t01-veo31-1080p">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/01-odnowione.png" width="1200" height="864" loading="lazy" decoding="async" alt="a2-06, odnowione, Grok Imagine Image 2.0"><figcaption>odnowione, Grok Imagine Image 2.0</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/01-klip-veo31-1080p.mp4" poster="media/test-2410/01-klip-veo31-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1500" height="1080" aria-label="a2-06 Veo 3.1 1080p (odn. Grok)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Veo 3.1 <span class="rozdz">1080p</span> <span class="suf">odn. Grok</span></h3>
+    <p class="koszt"><strong>6,28 zł</strong> <small>(1,60 USD)</small> <span class="meta">za klip · 8,0 s · 1500×1080</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 Veo 3.1 1080p (odn. Grok)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 Veo 3.1 1080p (odn. Grok)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="t01:lite-1080p" data-label="a2-06 Veo 3.1 Lite 1080p (odn. Grok)" id="k-t01-lite-1080p">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/01-odnowione.png" width="1200" height="864" loading="lazy" decoding="async" alt="a2-06, odnowione, Grok Imagine Image 2.0"><figcaption>odnowione, Grok Imagine Image 2.0</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/01-klip-lite-1080p.mp4" poster="media/test-2410/01-klip-lite-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1500" height="1080" aria-label="a2-06 Veo 3.1 Lite 1080p (odn. Grok)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Veo 3.1 Lite <span class="rozdz">1080p</span> <span class="suf">odn. Grok</span></h3>
+    <p class="koszt"><strong>1,57 zł</strong> <small>(0,40 USD)</small> <span class="meta">za klip · 8,0 s · 1500×1080</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 Veo 3.1 Lite 1080p (odn. Grok)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 Veo 3.1 Lite 1080p (odn. Grok)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="t01:veofast-1080p" data-label="a2-06 Veo 3.1 Fast 1080p (odn. Grok)" id="k-t01-veofast-1080p">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/01-odnowione.png" width="1200" height="864" loading="lazy" decoding="async" alt="a2-06, odnowione, Grok Imagine Image 2.0"><figcaption>odnowione, Grok Imagine Image 2.0</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/01-klip-veofast-1080p.mp4" poster="media/test-2410/01-klip-veofast-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1500" height="1080" aria-label="a2-06 Veo 3.1 Fast 1080p (odn. Grok)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Veo 3.1 Fast <span class="rozdz">1080p</span> <span class="suf">odn. Grok</span></h3>
+    <p class="koszt"><strong>3,14 zł</strong> <small>(0,80 USD)</small> <span class="meta">za klip · 8,0 s · 1500×1080</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 Veo 3.1 Fast 1080p (odn. Grok)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 Veo 3.1 Fast 1080p (odn. Grok)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="t01:grok15lite-1080p" data-label="a2-06 Grok Imagine Video 1.5 Lite 1080p (odn. Grok)" id="k-t01-grok15lite-1080p">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/01-odnowione.png" width="1200" height="864" loading="lazy" decoding="async" alt="a2-06, odnowione, Grok Imagine Image 2.0"><figcaption>odnowione, Grok Imagine Image 2.0</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/01-klip-grok15lite-1080p.mp4" poster="media/test-2410/01-klip-grok15lite-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1680" height="1200" aria-label="a2-06 Grok Imagine Video 1.5 Lite 1080p (odn. Grok)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Grok Imagine Video 1.5 Lite <span class="rozdz">1080p</span> <span class="suf">odn. Grok</span></h3>
+    <p class="koszt"><strong>4,43 zł</strong> <small>(1,13 USD)</small> <span class="meta">za klip · 8,0 s · 1680×1200</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 Grok Imagine Video 1.5 Lite 1080p (odn. Grok)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 Grok Imagine Video 1.5 Lite 1080p (odn. Grok)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="t01:grok15lite-720p" data-label="a2-06 Grok Imagine Video 1.5 Lite 720p (odn. Grok)" id="k-t01-grok15lite-720p">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/01-odnowione.png" width="1200" height="864" loading="lazy" decoding="async" alt="a2-06, odnowione, Grok Imagine Image 2.0"><figcaption>odnowione, Grok Imagine Image 2.0</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/01-klip-grok15lite-720p.mp4" poster="media/test-2410/01-klip-grok15lite-720p-poster.jpg" controls muted loop playsinline preload="metadata" width="1120" height="800" aria-label="a2-06 Grok Imagine Video 1.5 Lite 720p (odn. Grok)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Grok Imagine Video 1.5 Lite <span class="rozdz">720p</span> <span class="suf">odn. Grok</span></h3>
+    <p class="koszt"><strong>0,98 zł</strong> <small>(0,25 USD)</small> <span class="meta">za klip · 8,0 s · 1120×800</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 Grok Imagine Video 1.5 Lite 720p (odn. Grok)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 Grok Imagine Video 1.5 Lite 720p (odn. Grok)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="t01:wan27-1080p" data-label="a2-06 Wan 2.7 1080p (odn. Grok)" id="k-t01-wan27-1080p">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/01-odnowione.png" width="1200" height="864" loading="lazy" decoding="async" alt="a2-06, odnowione, Grok Imagine Image 2.0"><figcaption>odnowione, Grok Imagine Image 2.0</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/01-klip-wan27-1080p.mp4" poster="media/test-2410/01-klip-wan27-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1696" height="1222" aria-label="a2-06 Wan 2.7 1080p (odn. Grok)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Wan 2.7 <span class="rozdz">1080p</span> <span class="suf">odn. Grok</span></h3>
+    <p class="koszt"><strong>3,14 zł</strong> <small>(0,80 USD)</small> <span class="meta">za klip · 8,0 s · 1696×1222</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 Wan 2.7 1080p (odn. Grok)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 Wan 2.7 1080p (odn. Grok)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="t01:wan26-1080p" data-label="a2-06 Wan 2.6 1080p (odn. Grok)" id="k-t01-wan26-1080p">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/01-odnowione.png" width="1200" height="864" loading="lazy" decoding="async" alt="a2-06, odnowione, Grok Imagine Image 2.0"><figcaption>odnowione, Grok Imagine Image 2.0</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/01-klip-wan26-1080p.mp4" poster="media/test-2410/01-klip-wan26-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1500" height="1080" aria-label="a2-06 Wan 2.6 1080p (odn. Grok)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Wan 2.6 <span class="rozdz">1080p</span> <span class="suf">odn. Grok</span></h3>
+    <p class="koszt"><strong>5,89 zł</strong> <small>(1,50 USD)</small> <span class="meta">za klip · 10,0 s · 1500×1080</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 Wan 2.6 1080p (odn. Grok)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 Wan 2.6 1080p (odn. Grok)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="t01:seedance15pro-1080p" data-label="a2-06 Seedance 1.5 Pro 1080p (odn. Grok)" id="k-t01-seedance15pro-1080p">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/01-odnowione.png" width="1200" height="864" loading="lazy" decoding="async" alt="a2-06, odnowione, Grok Imagine Image 2.0"><figcaption>odnowione, Grok Imagine Image 2.0</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/01-klip-seedance15pro-1080p.mp4" poster="media/test-2410/01-klip-seedance15pro-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1664" height="1248" aria-label="a2-06 Seedance 1.5 Pro 1080p (odn. Grok)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Seedance 1.5 Pro <span class="rozdz">1080p</span> <span class="suf">odn. Grok</span></h3>
+    <p class="koszt"><strong>1,84 zł</strong> <small>(0,47 USD)</small> <span class="meta">za klip · 8,0 s · 1664×1248</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 Seedance 1.5 Pro 1080p (odn. Grok)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 Seedance 1.5 Pro 1080p (odn. Grok)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="t01:hailuo23-1080p" data-label="a2-06 Hailuo 2.3 1080p (odn. Grok)" id="k-t01-hailuo23-1080p">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/01-odnowione.png" width="1200" height="864" loading="lazy" decoding="async" alt="a2-06, odnowione, Grok Imagine Image 2.0"><figcaption>odnowione, Grok Imagine Image 2.0</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/01-klip-hailuo23-1080p.mp4" poster="media/test-2410/01-klip-hailuo23-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1500" height="1080" aria-label="a2-06 Hailuo 2.3 1080p (odn. Grok)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Hailuo 2.3 <span class="rozdz">1080p</span> <span class="suf">odn. Grok</span></h3>
+    <p class="koszt"><strong>1,92 zł</strong> <small>(0,49 USD)</small> <span class="meta">za klip · 5,9 s · 1500×1080</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 Hailuo 2.3 1080p (odn. Grok)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 Hailuo 2.3 1080p (odn. Grok)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="t01:hailuo3-2k" data-label="a2-06 Hailuo 3 2K (odn. Grok)" id="k-t01-hailuo3-2k">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/01-odnowione.png" width="1200" height="864" loading="lazy" decoding="async" alt="a2-06, odnowione, Grok Imagine Image 2.0"><figcaption>odnowione, Grok Imagine Image 2.0</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/01-klip-hailuo3-2k.mp4" poster="media/test-2410/01-klip-hailuo3-2k-poster.jpg" controls muted loop playsinline preload="metadata" width="1984" height="1440" aria-label="a2-06 Hailuo 3 2K (odn. Grok)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Hailuo 3 <span class="rozdz">2K</span> <span class="suf">odn. Grok</span></h3>
+    <p class="koszt"><strong>4,08 zł</strong> <small>(1,04 USD)</small> <span class="meta">za klip · 8,0 s · 1984×1440</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 Hailuo 3 2K (odn. Grok)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 Hailuo 3 2K (odn. Grok)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="t01:happyhorse11-1080p" data-label="a2-06 HappyHorse 1.1 1080p (odn. Grok)" id="k-t01-happyhorse11-1080p">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/01-odnowione.png" width="1200" height="864" loading="lazy" decoding="async" alt="a2-06, odnowione, Grok Imagine Image 2.0"><figcaption>odnowione, Grok Imagine Image 2.0</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/01-klip-happyhorse11-1080p.mp4" poster="media/test-2410/01-klip-happyhorse11-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1698" height="1222" aria-label="a2-06 HappyHorse 1.1 1080p (odn. Grok)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>HappyHorse 1.1 <span class="rozdz">1080p</span> <span class="suf">odn. Grok</span></h3>
+    <p class="koszt"><strong>4,01 zł</strong> <small>(1,02 USD)</small> <span class="meta">za klip · 8,1 s · 1698×1222</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 HappyHorse 1.1 1080p (odn. Grok)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 HappyHorse 1.1 1080p (odn. Grok)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="t01:lite-noc" data-label="a2-06 Veo 3.1 Lite 720p (ze skanu, noc 23/24.10)" id="k-t01-lite-noc">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/01-oryginal.jpg" width="1413" height="1024" loading="lazy" decoding="async" alt="a2-06, skan, bez odnowienia"><figcaption>skan, bez odnowienia</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/01-klip-lite-noc.mp4" poster="media/test-2410/01-klip-lite-noc-poster.jpg" controls muted loop playsinline preload="metadata" width="994" height="720" aria-label="a2-06 Veo 3.1 Lite 720p (ze skanu, noc 23/24.10)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Veo 3.1 Lite <span class="rozdz">720p</span> <span class="suf">ze skanu, noc 23/24.10</span></h3>
+    <p class="koszt"><strong>0,94 zł</strong> <small>(0,24 USD)</small> <span class="meta">za klip · 8,0 s · 994×720</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-06 Veo 3.1 Lite 720p (ze skanu, noc 23/24.10)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-06 Veo 3.1 Lite 720p (ze skanu, noc 23/24.10)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article>
+</section><section class="grupa" id="a2-07-grok">
+  <header class="g-head"><p class="g-nr">Zdjęcie a2-07</p><h2>Przedszkole przy fontannie, 1985 (test modeli 02)</h2><p class="g-wstep">Odnowienie Grok Imagine Image 2.0, dwa modele Veo; ostatnia karta to klip z nocy prosto ze skanu. Klipów: 3.</p></header>
+  <article class="karta" data-key="t02:veo31-1080p" data-label="a2-07 Veo 3.1 1080p (odn. Grok)" id="k-t02-veo31-1080p">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/02-odnowione.png" width="1168" height="880" loading="lazy" decoding="async" alt="a2-07, odnowione, Grok Imagine Image 2.0"><figcaption>odnowione, Grok Imagine Image 2.0</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/02-klip-veo31-1080p.mp4" poster="media/test-2410/02-klip-veo31-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1434" height="1080" aria-label="a2-07 Veo 3.1 1080p (odn. Grok)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Veo 3.1 <span class="rozdz">1080p</span> <span class="suf">odn. Grok</span></h3>
+    <p class="koszt"><strong>6,28 zł</strong> <small>(1,60 USD)</small> <span class="meta">za klip · 8,0 s · 1434×1080</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-07 Veo 3.1 1080p (odn. Grok)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-07 Veo 3.1 1080p (odn. Grok)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="t02:lite-1080p" data-label="a2-07 Veo 3.1 Lite 1080p (odn. Grok)" id="k-t02-lite-1080p">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/02-odnowione.png" width="1168" height="880" loading="lazy" decoding="async" alt="a2-07, odnowione, Grok Imagine Image 2.0"><figcaption>odnowione, Grok Imagine Image 2.0</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/02-klip-lite-1080p.mp4" poster="media/test-2410/02-klip-lite-1080p-poster.jpg" controls muted loop playsinline preload="metadata" width="1434" height="1080" aria-label="a2-07 Veo 3.1 Lite 1080p (odn. Grok)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Veo 3.1 Lite <span class="rozdz">1080p</span> <span class="suf">odn. Grok</span></h3>
+    <p class="koszt"><strong>1,57 zł</strong> <small>(0,40 USD)</small> <span class="meta">za klip · 8,0 s · 1434×1080</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-07 Veo 3.1 Lite 1080p (odn. Grok)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-07 Veo 3.1 Lite 1080p (odn. Grok)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article><article class="karta" data-key="t02:lite-noc" data-label="a2-07 Veo 3.1 Lite 720p (ze skanu, noc 23/24.10)" id="k-t02-lite-noc">
+  <div class="para">
+    <div class="wejscie"><figure class="we"><img src="media/test-2410/02-oryginal.jpg" width="2741" height="2085" loading="lazy" decoding="async" alt="a2-07, skan, bez odnowienia"><figcaption>skan, bez odnowienia</figcaption></figure></div>
+    <figure class="klip"><video src="media/test-2410/02-klip-lite-noc.mp4" poster="media/test-2410/02-klip-lite-noc-poster.jpg" controls muted loop playsinline preload="metadata" width="946" height="720" aria-label="a2-07 Veo 3.1 Lite 720p (ze skanu, noc 23/24.10)"></video></figure>
+  </div>
+  <div class="podpis">
+    <h3>Veo 3.1 Lite <span class="rozdz">720p</span> <span class="suf">ze skanu, noc 23/24.10</span></h3>
+    <p class="koszt"><strong>0,94 zł</strong> <small>(0,24 USD)</small> <span class="meta">za klip · 8,0 s · 946×720</span></p>
+  </div>
+  <div class="ocena">
+    <div class="gwiazdki" role="radiogroup" aria-label="Ocena: a2-07 Veo 3.1 Lite 720p (ze skanu, noc 23/24.10)"><button type="button" class="gw" role="radio" aria-checked="false" data-v="1" aria-label="1 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="2" aria-label="2 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="3" aria-label="3 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="4" aria-label="4 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><button type="button" class="gw" role="radio" aria-checked="false" data-v="5" aria-label="5 z 5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg></button><span class="wynik" aria-live="polite"></span></div>
+    <label class="kom"><span class="sr">Komentarz: a2-07 Veo 3.1 Lite 720p (ze skanu, noc 23/24.10)</span><textarea rows="2" placeholder="Komentarz (opcjonalnie)"></textarea></label>
+  </div>
+</article>
+</section>
+</main>
+<footer><div class="wrap"><a href="index.html">Wróć do raportu z testów</a></div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+  var PREF='porusz-ocena:v1:';
+  var karty=[].slice.call(document.querySelectorAll('.karta'));
+  var Y=karty.length;
+  function czytaj(k){try{var s=localStorage.getItem(PREF+k);return s?JSON.parse(s):{}}catch(e){return {}}}
+  function zapisz(k,d){try{if(!d.r&&!d.c){localStorage.removeItem(PREF+k)}else{localStorage.setItem(PREF+k,JSON.stringify(d))}}catch(e){}}
+  function maluj(karta,r){
+    [].forEach.call(karta.querySelectorAll('.gw'),function(b){var v=+b.dataset.v;b.classList.toggle('wl',v<=r);b.setAttribute('aria-checked',v===r?'true':'false');b.tabIndex=(r?v===r:v===1)?0:-1});
+    karta.querySelector('.wynik').textContent=r?r+'/5':'';
+    karta.classList.toggle('oceniona',!!r);
+  }
+  function licz(){
+    var x=karty.filter(function(k){return !!czytaj(k.dataset.key).r}).length;
+    document.getElementById('x').textContent=x;
+    document.getElementById('bar').style.width=(Y?x/Y*100:0)+'%';
+  }
+  karty.forEach(function(karta){
+    var k=karta.dataset.key, d=czytaj(k), ta=karta.querySelector('textarea');
+    maluj(karta,d.r||0); ta.value=d.c||'';
+    karta.querySelector('.gwiazdki').addEventListener('click',function(e){
+      var b=e.target.closest('.gw'); if(!b)return;
+      var d=czytaj(k), v=+b.dataset.v;
+      d.r=(d.r===v)?0:v; d.t=new Date().toISOString();
+      zapisz(k,d); maluj(karta,d.r); licz();
+    });
+    karta.querySelector('.gwiazdki').addEventListener('keydown',function(e){
+      var d=czytaj(k), r=d.r||0, n=null;
+      if(e.key==='ArrowRight'||e.key==='ArrowUp')n=Math.min(5,r+1);
+      if(e.key==='ArrowLeft'||e.key==='ArrowDown')n=Math.max(1,r-1);
+      if(n===null)return; e.preventDefault();
+      d.r=n; d.t=new Date().toISOString(); zapisz(k,d); maluj(karta,n); licz();
+      karta.querySelector('.gw[data-v="'+n+'"]').focus();
+    });
+    var tm;
+    ta.addEventListener('input',function(){clearTimeout(tm);tm=setTimeout(function(){var d=czytaj(k);d.c=ta.value.trim()?ta.value:'';d.t=new Date().toISOString();zapisz(k,d)},250)});
+    ta.addEventListener('blur',function(){var d=czytaj(k);d.c=ta.value.trim()?ta.value:'';zapisz(k,d)});
+  });
+  licz();
+  function teraz(){var d=new Date(),p=function(n){return(n<10?'0':'')+n};return{dzien:p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear(),godz:p(d.getHours())+':'+p(d.getMinutes()),iso:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())}}
+  function zbierz(){
+    return karty.map(function(karta){var d=czytaj(karta.dataset.key);return{klucz:karta.dataset.key,klip:karta.dataset.label,ocena:d.r||0,komentarz:(d.c||'').trim(),czas:d.t||null}}).filter(function(o){return o.ocena||o.komentarz});
+  }
+  var toastEl=document.getElementById('toast'),tt;
+  function toast(t){toastEl.textContent=t;toastEl.classList.add('on');clearTimeout(tt);tt=setTimeout(function(){toastEl.classList.remove('on')},1800)}
+  function tekst(){
+    var t=teraz(), w=zbierz(), oc=w.filter(function(o){return o.ocena});
+    var linie=['Ocena klipów porusz, '+t.dzien+', '+t.godz,'Ocenione '+oc.length+' z '+Y,''];
+    w.forEach(function(o){var kom=o.komentarz.replace(/\s+/g,' ');
+      if(o.ocena)linie.push(o.klip+': '+o.ocena+'/5'+(kom?', '+kom:''));
+      else linie.push(o.klip+': bez gwiazdek, '+kom);
+    });
+    return linie.join('\n');
+  }
+  function kopiuj(s){
+    if(navigator.clipboard&&window.isSecureContext){return navigator.clipboard.writeText(s)}
+    return new Promise(function(ok,nie){var a=document.createElement('textarea');a.value=s;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')?ok():nie()}catch(e){nie(e)}document.body.removeChild(a)});
+  }
+  document.getElementById('kopiuj').addEventListener('click',function(){
+    if(!zbierz().length){toast('Najpierw oceń choć jeden klip');return}
+    kopiuj(tekst()).then(function(){toast('Skopiowane')},function(){toast('Nie udało się skopiować')});
+  });
+  document.getElementById('json').addEventListener('click',function(){
+    var t=teraz(), dane={strona:'porusz ocena klipów',data:new Date().toISOString(),ocenione:zbierz().filter(function(o){return o.ocena}).length,wszystkich:Y,klipy:zbierz()};
+    var url=URL.createObjectURL(new Blob([JSON.stringify(dane,null,2)],{type:'application/json'}));
+    var a=document.createElement('a');a.href=url;a.download='porusz-oceny-'+t.iso+'.json';document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url)},2000); toast('Pobrano JSON');
+  });
+})();
+</script>
+</body>
+</html>
